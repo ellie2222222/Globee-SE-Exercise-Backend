@@ -1,6 +1,8 @@
 import bcrypt from 'bcryptjs';
 import * as authRepository from '../repositories/user.repository.js';
 import {generateToken} from './jwt.service.js'
+import { AppError } from '../errors/appError.js';
+
 
 export async function loginHandler(loginDTO) {
     const email = loginDTO.email;
@@ -8,7 +10,7 @@ export async function loginHandler(loginDTO) {
     const user = await authRepository.findByEmail(email);
 
     if (!user) {
-        throw new Error('Invalid email or password');
+        throw new AppError('Invalid email or password', "VALIDATION_ERROR", 401);
     }
 
     const isMatch = await bcrypt.compare(
@@ -17,7 +19,7 @@ export async function loginHandler(loginDTO) {
     );
 
     if (!isMatch) {
-        throw new Error('Invalid email or password');
+        throw new AppError('Invalid email or password', "VALIDATION_ERROR", 401);
     }
 
     const {accessToken, refreshToken} = generateToken(user);
