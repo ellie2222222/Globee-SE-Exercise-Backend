@@ -43,15 +43,22 @@ app.use((req, res) => {
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Unhandled request error:', err);
-  res.status(500).json({
+
+  res.status(err.statusCode || 500).json({
     success: false,
-    status: 500,
-    error: 'Internal Server Error',
-    message: 'An unexpected system error occurred',
-    path: req.originalUrl || req.url,
-    timestamp: new Date().toISOString(),
-    errorCode: 'SYSTEM_001'
+    errorCode: err.errorCode || 'SYSTEM_001',
+    message: err.message || 'An unexpected system error occurred'
   });
+
+  // res.status(500).json({
+  //   success: false,
+  //   status: 500,
+  //   error: 'Internal Server Error',
+  //   message: 'An unexpected system error occurred',
+  //   path: req.originalUrl || req.url,
+  //   timestamp: new Date().toISOString(),
+  //   errorCode: 'SYSTEM_001'
+  // });
 });
 
 async function startServer() {
