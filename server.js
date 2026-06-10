@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import { db } from './db.js';
 import { authMiddleware } from './middleware/authMiddleware.js';
@@ -12,10 +13,11 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors({
-  origin: '*',
+  origin: true,
   credentials: true
 }));
 app.use(express.json());
+app.use(cookieParser());
 
 app.use((req, res, next) => {
   const now = new Date().toISOString();
@@ -23,9 +25,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.post('/api/auth/login', login);
-// app.post('/api/auth/refresh-token', refreshToken);
-// app.post('/api/auth/logout', authMiddleware, logout);
 app.use('/api/auth', authRoute);
 
 // Catch-all 404 handler
@@ -44,7 +43,19 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
   console.error('Unhandled request error:', err);
 
-  res.status(err.statusCode || 500).json({
+  if (err.message === 'Invalid email or password') {
+    return res.status(401).json({
+      success: false,
+      status: 401,
+      error: 'Unauthorized',
+      message: 'Invalid email or password',
+      path: req.originalUrl || req.url,
+      timestamp: new Date().toISOString(),
+      errorCode: 'AUTH_001'
+    });
+  }
+
+  res.status(500).json({
     success: false,
     errorCode: err.errorCode || 'SYSTEM_001',
     message: err.message || 'An unexpected system error occurred'

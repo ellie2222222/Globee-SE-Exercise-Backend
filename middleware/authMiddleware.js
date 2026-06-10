@@ -1,11 +1,11 @@
 import jwt from 'jsonwebtoken';
-import { db } from '../db.js';
+import { prisma } from '../prisma.js';
 
 export const authMiddleware = async (req, res, next) => {
-  const authHeader = req.headers.authorization;
+  const token = req.cookies?.accessToken;
   const path = req.originalUrl || req.url;
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  if (!token) {
     return res.status(401).json({
       success: false,
       status: 401,
@@ -17,13 +17,13 @@ export const authMiddleware = async (req, res, next) => {
     });
   }
 
-  const token = authHeader.split(' ')[1];
-
   try {
     const decoded = jwt.verify(token, process.env.JWT_ACCESS_TOKEN_SECRET);
 
     // Check if user still exists and is ACTIVE
-    const user = await db.findUserById(decoded.id);
+    const user = await prisma.user.findUnique({
+      where: { id: parseInt(decoded.sub) }
+    });
     if (!user) {
       return res.status(401).json({
         success: false,
