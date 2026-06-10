@@ -5,7 +5,7 @@ import * as authRepository from '../repositories/user.repository.js'
 export async function login(req, res, next) {
     try {
         const dto = new LoginDTO(req.body);
-        const {user, accessToken, refreshToken} = await authService.loginHandler(dto);
+        const { user, accessToken, refreshToken } = await authService.loginHandler(dto);
 
         const isProd = process.env.NODE_ENV === 'production';
 
@@ -36,12 +36,10 @@ export async function login(req, res, next) {
 
 export async function logout(req, res, next) {
     try {
-        // Clear refresh token in DB
         await authRepository.updateRefreshToken(req.user.id, null);
 
         const isProd = process.env.NODE_ENV === 'production';
 
-        // Clear cookies
         res.clearCookie('accessToken', {
             httpOnly: true,
             secure: isProd,

@@ -10,7 +10,6 @@ export const db = {
   async initializeDatabase() {
     await prisma.$connect();
 
-    // Seed admin user if not exists
     const existing = await prisma.user.findUnique({
       where: { email: 'admin@gmail.com' }
     });
@@ -25,7 +24,6 @@ export const db = {
           status: 'ACTIVE'
         }
       });
-      console.log('Seeded default admin user: admin@gmail.com');
     }
 
     console.log('Database connected successfully via Prisma.');
