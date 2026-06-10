@@ -7,6 +7,14 @@ export async function findByEmail(email) {
     });
 }
 
+export async function findById(id) {
+    return prisma.user.findUnique({
+        where: {
+            id
+        }
+    });
+}
+
 export async function updateRefreshToken(
     userId,
     refreshToken

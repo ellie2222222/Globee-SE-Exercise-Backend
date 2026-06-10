@@ -23,12 +23,7 @@ export async function login(req, res, next) {
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
-        res.json({
-            "id": user.id.toString(),
-            "email": user.email,
-            "name": user.name,
-            "status": user.status
-        });
+        res.json({ message: 'Login successful' });
     } catch (error) {
         next(error);
     }
@@ -68,4 +63,30 @@ export async function me(req, res) {
         "name": user.name,
         "status": user.status
     });
+}
+
+export async function refresh(req, res, next) {
+    try {
+        const { user, accessToken, refreshToken: newRefreshToken } = await authService.refreshHandler(req.cookies?.refreshToken);
+
+        const isProd = process.env.NODE_ENV === 'production';
+
+        res.cookie('accessToken', accessToken, {
+            httpOnly: true,
+            secure: isProd,
+            sameSite: isProd ? 'none' : 'lax',
+            maxAge: 15 * 60 * 1000
+        });
+
+        res.cookie('refreshToken', newRefreshToken, {
+            httpOnly: true,
+            secure: isProd,
+            sameSite: isProd ? 'none' : 'lax',
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        });
+
+        res.json({ message: 'Token refreshed' });
+    } catch (error) {
+        next(error);
+    }
 }
