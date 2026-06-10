@@ -5,7 +5,7 @@ import * as authRepository from '../repositories/user.repository.js'
 export async function login(req, res, next) {
     try {
         const dto = new LoginDTO(req.body);
-        const {user, accessToken, refreshToken} = await authService.loginHandler(dto);
+        const { user, accessToken, refreshToken } = await authService.loginHandler(dto);
 
         const isProd = process.env.NODE_ENV === 'production';
 
@@ -24,10 +24,14 @@ export async function login(req, res, next) {
         });
 
         res.json({
-            "id": user.id.toString(),
-            "email": user.email,
-            "name": user.name,
-            "status": user.status
+            "success": true,
+            "message": "Login successful",
+            "data": {
+                "id": user.id.toString(),
+                "email": user.email,
+                "name": user.name,
+                "status": user.status
+            }
         });
     } catch (error) {
         next(error);
