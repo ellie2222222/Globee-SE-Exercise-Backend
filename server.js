@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { db } from './db.js';
 import { authMiddleware } from './middleware/authMiddleware.js';
+import authRoute from './routes/auth.route.js';
 
 dotenv.config();
 
@@ -11,7 +12,7 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors({
-  origin: true,
+  origin: '*',
   credentials: true
 }));
 app.use(express.json());
@@ -25,6 +26,7 @@ app.use((req, res, next) => {
 // app.post('/api/auth/login', login);
 // app.post('/api/auth/refresh-token', refreshToken);
 // app.post('/api/auth/logout', authMiddleware, logout);
+app.use('/api/auth', authRoute);
 
 // Catch-all 404 handler
 app.use((req, res) => {
