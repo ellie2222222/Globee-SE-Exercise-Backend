@@ -10,7 +10,11 @@ export async function loginHandler(loginDTO) {
     const user = await authRepository.findByEmail(email);
 
     if (!user) {
-        throw new AppError('Invalid email or password', "VALIDATION_ERROR", 401);
+        throw new AppError('Invalid email or password', "INVALID_CREDENTIALS", 401);
+    }
+
+    if (user.status == "INACTIVE") {
+        throw new AppError('Account is not active', "ACCOUNT_INACTIVE", 403);
     }
 
     const isMatch = await bcrypt.compare(
@@ -19,7 +23,7 @@ export async function loginHandler(loginDTO) {
     );
 
     if (!isMatch) {
-        throw new AppError('Invalid email or password', "VALIDATION_ERROR", 401);
+        throw new AppError('Invalid email or password', "INVALID_CREDENTIALS", 401);
     }
 
     const {accessToken, refreshToken} = generateToken(user);
