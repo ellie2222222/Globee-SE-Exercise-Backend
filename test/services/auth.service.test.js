@@ -1,11 +1,11 @@
-import { loginHandler } from '../services/auth.service.js'
-import * as authRepository from '../repositories/user.repository.js'
+import { loginHandler } from '../../services/auth.service.js'
+import * as authRepository from '../../repositories/user.repository.js'
 import bcrypt from 'bcryptjs'
-import { generateToken } from '../services/jwt.service.js'
+import { generateToken } from '../../services/jwt.service.js'
 
-jest.mock('../repositories/user.repository.js')
+jest.mock('../../repositories/user.repository.js')
 jest.mock('bcryptjs')
-jest.mock('../services/jwt.service.js')
+jest.mock('../../services/jwt.service.js')
 
 describe('loginHandler', () => {
     const mockUser = {
