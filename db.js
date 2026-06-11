@@ -25,6 +25,21 @@ export const db = {
         }
       });
     }
+    const existing2 = await prisma.user.findUnique({
+      where: { email: 'admin1@gmail.com' }
+    });
+
+    if (!existing2) {
+      const hashedPassword = bcrypt.hashSync('admin', 10);
+      await prisma.user.create({
+        data: {
+          email: 'admin1@gmail.com',
+          password: hashedPassword,
+          name: 'Admin1',
+          status: 'INACTIVE'
+        }
+      });
+    }
 
     console.log('Database connected successfully via Prisma.');
   },
