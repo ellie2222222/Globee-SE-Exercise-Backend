@@ -55,6 +55,17 @@ app.use((err, req, res, next) => {
     });
   }
 
+  if (err.statusCode) {
+    return res.status(err.statusCode).json({
+      success: false,
+      status: err.statusCode,
+      error: err.statusCode === 401 ? 'Unauthorized' : err.statusCode === 403 ? 'Forbidden' : 'Error',
+      message: err.message,
+      path: req.originalUrl || req.url,
+      timestamp: new Date().toISOString()
+    });
+  }
+
   res.status(500).json({
     success: false,
     errorCode: err.errorCode || 'SYSTEM_001',

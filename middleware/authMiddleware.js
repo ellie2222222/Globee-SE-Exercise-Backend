@@ -20,7 +20,6 @@ export const authMiddleware = async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_ACCESS_TOKEN_SECRET);
 
-    // Check if user still exists and is ACTIVE
     const user = await prisma.user.findUnique({
       where: { id: parseInt(decoded.sub) }
     });
