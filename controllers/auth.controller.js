@@ -23,7 +23,16 @@ export async function login(req, res, next) {
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
-        res.json({ message: 'Login successful' });
+        res.json({
+            "success": true,
+            "message": "Login successful",
+            "data": {
+                "id": user.id.toString(),
+                "email": user.email,
+                "name": user.name,
+                "status": user.status
+            }
+        });
     } catch (error) {
         next(error);
     }
